@@ -4,8 +4,8 @@ A web application of face recognition.
 
 
 Team member:
-wenyue zhang\n
-junyang huang\n
-yufeng pan\n
-jiaxuan qi\n
-guowen wang\n
+wenyue zhang,
+junyang huang,
+yufeng pan,
+jiaxuan qi,
+guowen wang.

@@ -2,13 +2,12 @@ import h5py
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-import warnings
-
 from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,precision_score,recall_score
 # suppress display of warnings
-warnings.filterwarnings('ignore')
 import os
 import cv2
+
+
 def load_image(path):
     img = cv2.imread(path, 1)
     # OpenCV loads images with color channels

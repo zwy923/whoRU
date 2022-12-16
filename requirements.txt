@@ -2,7 +2,6 @@ h5py
 streamlit
 numpy
 matplotlib
-warnings
 sklearn
 os
 cv2

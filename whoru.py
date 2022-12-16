@@ -7,7 +7,7 @@ from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,preci
 import os
 import cv2
 
-
+@st.cache
 def load_image(path):
     img = cv2.imread(path, 1)
     # OpenCV loads images with color channels
@@ -28,7 +28,8 @@ class IdentityMetadata():
 
     def image_path(self):
         return os.path.join(self.base, self.name, self.file) 
-    
+
+@st.cache
 def load_metadata(path):
     metadata = []
     for i in os.listdir(path):
@@ -44,7 +45,7 @@ metadata = load_metadata(source_dir)
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
-
+@st.cache
 def vgg_face():	
     model = Sequential()
     model.add(ZeroPadding2D((1,1),input_shape=(224,224, 3)))
@@ -140,9 +141,11 @@ for i, m in enumerate(metadata):
 
 print('embeddings shape :', embeddings.shape)
 
+@st.cache
 def distance(emb1, emb2):
     return np.sum(np.square(emb1 - emb2))
 
+@st.cache
 def show_pair(idx1, idx2):
     plt.figure(figsize=(8,3))
     plt.suptitle(f'Distance between {idx1} & {idx2}= {distance(embeddings[idx1], embeddings[idx2]):.2f}')

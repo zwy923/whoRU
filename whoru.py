@@ -1,6 +1,7 @@
 import h5py
 import streamlit as st
 import numpy as np
+from PIL import Image
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,precision_score,recall_score
 # suppress display of warnings
@@ -116,4 +117,33 @@ instructions = """
         and the output will be displayed to the screen.
         """
 st.write(instructions)
-file = st.file_uploader('Upload An Image')
+function_split=["Face recognition","Emotional recognition","Camera capture"]
+#start
+metadata = load_metadata(source_dir)
+model = vgg_face()
+model.load_weights('./vgg_face_weights.h5')
+vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
+type(vgg_face_descriptor)
+#插入功能
+
+
+
+
+
+
+
+
+
+
+function_type = st.sidebar.selectbox("Function Select", function_split)
+
+if (function_type == "Camera capture"):
+    picture = st.camera_input("Take a picture")
+
+elif (function_type == "Emotional recognition"):
+    file = st.file_uploader('Upload An Image')
+    st.write("looks unhappy?")
+else:
+    file = st.file_uploader('Upload An Image')
+    if(file):
+        img = Image.open(file)

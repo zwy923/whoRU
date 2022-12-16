@@ -3,6 +3,5 @@ streamlit
 numpy
 matplotlib
 sklearn
-os
 cv2
-tensorflow
+tensorflow==2.7.0

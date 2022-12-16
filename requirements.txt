@@ -1,9 +1,9 @@
 h5py
 streamlit
 numpy
-matplotlib.pyplot
+matplotlib
 warnings
-sklearn.metrics
+sklearn
 os
 cv2
 tensorflow

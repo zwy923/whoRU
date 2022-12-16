@@ -2,6 +2,6 @@ h5py
 streamlit
 numpy
 matplotlib
-sklearn
+scikit-learn
 opencv-python
 tensorflow==2.7.0

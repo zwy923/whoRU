@@ -3,5 +3,6 @@ streamlit
 numpy
 matplotlib
 scikit-learn
+opencv_contrib_python
 opencv-python
 tensorflow==2.7.0

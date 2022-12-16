@@ -3,6 +3,6 @@ streamlit
 numpy
 matplotlib
 sklearn
-os.path
+os
 cv2
 tensorflow

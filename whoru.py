@@ -45,7 +45,7 @@ metadata = load_metadata(source_dir)
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
-@st.cache
+@st.cache(allow_output_mutation=True)
 def vgg_face():	
     model = Sequential()
     model.add(ZeroPadding2D((1,1),input_shape=(224,224, 3)))

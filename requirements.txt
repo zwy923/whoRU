@@ -3,5 +3,5 @@ streamlit
 numpy
 matplotlib
 sklearn
-cv2
+opencv-python
 tensorflow==2.7.0

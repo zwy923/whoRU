@@ -152,6 +152,3 @@ def show_pair(idx1, idx2):
     plt.imshow(load_image(metadata[idx1].image_path()))
     plt.subplot(122)
     plt.imshow(load_image(metadata[idx2].image_path()));    
-
-show_pair(0, 1)
-show_pair(0, 20)

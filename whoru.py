@@ -6,15 +6,17 @@ from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,preci
 # suppress display of warnings
 import os
 import cv2
+from tensorflow.keras.models import Model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
 
+source_dir="./105_classes_pins_dataset"
 @st.cache
 def load_image(path):
     img = cv2.imread(path, 1)
     # OpenCV loads images with color channels
     # in BGR order. So we need to reverse them
     return img[...,::-1]
-
-source_dir="./105_classes_pins_dataset"
 class IdentityMetadata():
     def __init__(self, base, name, file):
         self.base = base
@@ -43,8 +45,6 @@ def load_metadata(path):
 # metadata = load_metadata('images')
 metadata = load_metadata(source_dir)
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
 @st.cache(allow_output_mutation=True)
 def vgg_face():	
     model = Sequential()
@@ -92,55 +92,6 @@ def vgg_face():
     model.add(Flatten())
     model.add(Activation('softmax'))
     return model
-
-st.title('Smart System')
-st.text(metadata[20])
-model = vgg_face()
-model.load_weights('./vgg_face_weights.h5')
-
-
-model.layers[0], model.layers[-2]
-
-
-
-from tensorflow.keras.models import Model
-vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
-
-type(vgg_face_descriptor)
-vgg_face_descriptor.inputs, vgg_face_descriptor.outputs
-
-
-# Get embedding vector for first image in the metadata using the pre-trained model
-img_path = metadata[20].image_path()
-img = load_image(img_path)
-
-# Normalising pixel values from [0-255] to [0-1]: scale RGB values to interval [0,1]
-img = (img / 255.).astype(np.float32)
-img = cv2.resize(img, dsize = (224,224))
-print(img.shape)
-
-# Obtain embedding vector for an image
-# Get the embedding vector for the above image using vgg_face_descriptor model and print the shape 
-embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
-print(embedding_vector.shape)
-
-embedding_vector[0], type(embedding_vector), type(embedding_vector[0])
-embedding_vector[2], embedding_vector[98], embedding_vector[-2]
-total_images = len(metadata)
-print('total_images :', total_images)
-
-embeddings = np.zeros((metadata.shape[0], 2622))
-for i, m in enumerate(metadata):
-    img_path = metadata[i].image_path()
-    img = load_image(img_path)
-    img = (img / 255.).astype(np.float32)
-    img = cv2.resize(img, dsize = (224,224))
-    embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
-    embeddings[i]=embedding_vector
-
-
-print('embeddings shape :', embeddings.shape)
-
 @st.cache
 def distance(emb1, emb2):
     return np.sum(np.square(emb1 - emb2))
@@ -152,4 +103,17 @@ def show_pair(idx1, idx2):
     plt.subplot(121)
     plt.imshow(load_image(metadata[idx1].image_path()))
     plt.subplot(122)
-    plt.imshow(load_image(metadata[idx2].image_path()));    
+    plt.imshow(load_image(metadata[idx2].image_path()));
+
+
+
+st.title('Welcome To Smart System Project WhoRU!')
+instructions = """
+        Either upload your own image or select from
+        the sidebar to get a preconfigured image.
+        The image you select or upload will be fed
+        through the Deep Neural Network in real-time
+        and the output will be displayed to the screen.
+        """
+st.write(instructions)
+file = st.file_uploader('Upload An Image')

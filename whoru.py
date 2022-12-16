@@ -139,8 +139,6 @@ for i, m in enumerate(metadata):
 
 
 print('embeddings shape :', embeddings.shape)
-embeddings[0], embeddings[20], embeddings[20].shape
-embeddings[20]
 
 def distance(emb1, emb2):
     return np.sum(np.square(emb1 - emb2))

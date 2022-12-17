@@ -14,7 +14,7 @@ from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, 
 st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items={
         'Get Help': 'https://github.com/zwy923/whoRU',
         'Report a bug': "https://github.com/zwy923/whoRU/issues",
-        'About': "#This is an *smart system* cool app!"
+        'About': "# This is a header. This is an *smart system* cool app!"
     })
 
 source_dir="./105_classes_pins_dataset"
@@ -110,7 +110,7 @@ def show_pair(idx1, idx2):
     plt.subplot(121)
     plt.imshow(load_image(metadata[idx1].image_path()))
     plt.subplot(122)
-    plt.imshow(load_image(metadata[idx2].image_path()))
+    plt.imshow(load_image(metadata[idx2].image_path()));
 
 
 

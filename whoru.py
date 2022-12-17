@@ -112,7 +112,7 @@ def show_pair(idx1, idx2):
 def load_audio():
     audio_file = open('./assets/sound/The Who - Who Are You.mp3', 'rb')
     audio_bytes = audio_file.read()
-    return load_audio()
+    return audio_bytes
 
 st.title('Welcome To Smart System Project WhoRU!')
 instructions = """

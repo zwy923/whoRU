@@ -151,8 +151,9 @@ img = cv2.resize(img, dsize = (224,224))
 # Obtain embedding vector for an image
 # Get the embedding vector for the above image using vgg_face_descriptor model and print the shape 
 embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
-total_images = len(metadata)
-print('total_images :', total_images)
+
+
+
 embeddings = np.zeros((metadata.shape[0], 2622))#初始化嵌入数组
 creat_embedding(embeddings)
 

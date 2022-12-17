@@ -118,6 +118,7 @@ instructions = """
         """
 st.write(instructions)
 function_split=["Face recognition","Emotional recognition","Camera capture"]
+name_split=["Wenyue Zhang",""]
 #start
 metadata = load_metadata(source_dir)
 model = vgg_face()
@@ -136,14 +137,19 @@ type(vgg_face_descriptor)
 
 
 function_type = st.sidebar.selectbox("Function Select", function_split)
-
+st.snow()
 if (function_type == "Camera capture"):
     picture = st.camera_input("Take a picture")
 
 elif (function_type == "Emotional recognition"):
     file = st.file_uploader('Upload An Image')
+    if(file):
+        img = Image.open(file)
+        st.success('This is a success img load', icon="✅")
     st.write("looks unhappy?")
+    st.snow()
 else:
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)
+        st.success('This is a success img load', icon="✅")

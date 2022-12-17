@@ -155,9 +155,7 @@ embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
 
 
 embeddings = np.zeros((metadata.shape[0], 2622))#初始化嵌入数组
-creat_embedding(embeddings)
 
-show_pair(17023, 17024)
 #插入功能
 
 

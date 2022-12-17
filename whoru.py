@@ -95,24 +95,35 @@ def vgg_face():
     model.add(Flatten())
     model.add(Activation('softmax'))
     return model
-@st.cache
+
+
 def distance(emb1, emb2):
     return np.sum(np.square(emb1 - emb2))
 
-@st.cache
 def show_pair(idx1, idx2):
     plt.figure(figsize=(8,3))
-    plt.suptitle(f'Distance between {idx1} & {idx2}= {distance(embeddings[idx1], embeddings[idx2]):.2f}')
-    plt.subplot(121)
-    plt.imshow(load_image(metadata[idx1].image_path()))
-    plt.subplot(122)
-    plt.imshow(load_image(metadata[idx2].image_path()));
+    st.write(f'Distance between {idx1} & {idx2}= {distance(embeddings[idx1], embeddings[idx2]):.2f}')
+
+    st.image(load_image(metadata[idx1].image_path()))
+
+    st.image(load_image(metadata[idx2].image_path()))
 
 @st.cache
 def load_audio():
     audio_file = open('./assets/sound/The Who - Who Are You.mp3', 'rb')
     audio_bytes = audio_file.read()
     return audio_bytes
+
+@st.experimental_memo
+def creat_embedding(embeddings):
+    for i, m in enumerate(metadata):
+        img_path = metadata[i].image_path()
+        img = load_image(img_path)
+        img = (img / 255.).astype(np.float32)
+        img = cv2.resize(img, dsize = (224,224))
+        embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
+        embeddings[i]=embedding_vector
+
 
 st.title('Welcome To Smart System Project WhoRU!')
 instructions = """
@@ -130,7 +141,22 @@ metadata = load_metadata(source_dir)
 model = vgg_face()
 model.load_weights('./vgg_face_weights.h5')
 vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
-type(vgg_face_descriptor)
+
+img_path = metadata[17024].image_path()
+img = load_image(img_path)
+
+# Normalising pixel values from [0-255] to [0-1]: scale RGB values to interval [0,1]
+img = (img / 255.).astype(np.float32)
+img = cv2.resize(img, dsize = (224,224))
+# Obtain embedding vector for an image
+# Get the embedding vector for the above image using vgg_face_descriptor model and print the shape 
+embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
+total_images = len(metadata)
+print('total_images :', total_images)
+embeddings = np.zeros((metadata.shape[0], 2622))#初始化嵌入数组
+creat_embedding(embeddings)
+
+show_pair(17023, 17024)
 #插入功能
 
 
@@ -146,7 +172,6 @@ group_member = st.sidebar.selectbox("Group member",member)
 with st.sidebar:
     st.audio(audio_bytes, format='audio/ogg')
     st.write("The Who - Who Are You")
-st.snow()
 if (function_type == "Camera capture"):
     picture = st.camera_input("Take a picture")
 

@@ -124,7 +124,7 @@ instructions = """
         """
 st.write(instructions)
 function_split=["Face recognition","Emotional recognition","Camera capture"]
-name_split=["Wenyue Zhang",""]
+member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Junyang Huang","Kecen Yin","Guowen Wang"]
 #start
 metadata = load_metadata(source_dir)
 model = vgg_face()
@@ -141,8 +141,14 @@ type(vgg_face_descriptor)
 
 
 
+audio_file = open('./assets/sound/The Who - Who Are You.mp3', 'rb')
+audio_bytes = audio_file.read()
 
 function_type = st.sidebar.selectbox("Function Select", function_split)
+group_member = st.sidebar.selectbox("Group member",member)
+with st.sidebar:
+    st.audio(audio_bytes, format='audio/ogg')
+    st.write("The Who - Who Are You")
 st.snow()
 if (function_type == "Camera capture"):
     picture = st.camera_input("Take a picture")

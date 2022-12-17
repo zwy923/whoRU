@@ -124,7 +124,7 @@ instructions = """
         """
 st.write(instructions)
 function_split=["Face recognition","Emotional recognition","Camera capture"]
-member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Guowen Wang","Junyang Huang","Kecen Yin"]
+member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Junyang Huang","Kecen Yin","Guowen Wang"]
 #start
 metadata = load_metadata(source_dir)
 model = vgg_face()

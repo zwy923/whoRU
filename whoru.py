@@ -11,6 +11,8 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
 
+st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items="This is a app about smart system.")
+
 source_dir="./105_classes_pins_dataset"
 @st.cache
 def load_image(path):

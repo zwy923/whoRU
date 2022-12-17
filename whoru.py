@@ -11,7 +11,11 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
 
-st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items={
+        'Get Help': 'https://github.com/zwy923/whoRU',
+        'Report a bug': "https://github.com/zwy923/whoRU/issues",
+        'About': "# This is a header. This is an *smart system* cool app!"
+    })
 
 source_dir="./105_classes_pins_dataset"
 @st.cache

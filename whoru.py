@@ -108,7 +108,11 @@ def show_pair(idx1, idx2):
     plt.subplot(122)
     plt.imshow(load_image(metadata[idx2].image_path()));
 
-
+@st.cache
+def load_audio():
+    audio_file = open('./assets/sound/The Who - Who Are You.mp3', 'rb')
+    audio_bytes = audio_file.read()
+    return audio_bytes
 
 st.title('Welcome To Smart System Project WhoRU!')
 instructions = """
@@ -136,7 +140,7 @@ type(vgg_face_descriptor)
 
 
 
-
+audio_bytes = load_audio()
 function_type = st.sidebar.selectbox("Function Select", function_split)
 group_member = st.sidebar.selectbox("Group member",member)
 with st.sidebar:

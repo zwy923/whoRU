@@ -7,6 +7,7 @@ from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,preci
 # suppress display of warnings
 import os
 import cv2
+from keras.models import load_model
 from tensorflow.keras.models import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
@@ -14,6 +15,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
+import tensorflow as tf
 
 
 
@@ -179,14 +181,22 @@ def train():
     st.image(example_image)
 
 
+def emotion(img):
+    emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}   
+    model = load_model('./63.h5',compile=False)
+    x = img
+    x = cv2.resize(x, (48, 48), interpolation=cv2.INTER_CUBIC)
+    x = cv2.cvtColor(x, cv2.COLOR_BGR2GRAY)
+    x = np.expand_dims(x, axis=-1).astype(np.float32) / 255.0
+    prediction = model.predict(np.expand_dims(x, axis=0))
+    predicted_label = np.argmax(prediction, axis=-1)
+    predicted_label = int(predicted_label)
+    predicted_emotion = emotion_dict[predicted_label]
+    
+    return predicted_emotion
 
 embeddings=initialization()
 #插入功能
-
-
-
-
-
 
 audio_bytes = load_audio()
 function_type = st.sidebar.selectbox("Function Select", function_split)
@@ -201,9 +211,10 @@ elif (function_type == "Emotional recognition"):
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)
+        img_array = np.array(img)
         st.success('This is a success img load', icon="✅")
-    st.write("looks unhappy?")
-    st.snow()
+        predicted_emotion=emotion(img_array)
+        st.write(f"Predicted emotion: {predicted_emotion}")
 else:
     file = st.file_uploader('Upload An Image')
     if(file):

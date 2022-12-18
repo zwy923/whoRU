@@ -143,7 +143,43 @@ def initialization():
     embeddings = np.load('data.npy')
     return embeddings
 
+@st.experimental_memo
+def train():
+    train_idx = np.arange(metadata.shape[0]) % 9 != 0     #every 9th example goes in test data and rest go in train data
+    test_idx = np.arange(metadata.shape[0]) % 9 == 0
+    # one half as train examples of 10 identities
+    X_train = embeddings[train_idx]
+    # another half as test examples of 10 identities
+    X_test = embeddings[test_idx]
+    targets = np.array([m.name for m in metadata])
+    #train labels
+    y_train = targets[train_idx]
+    #test labels
+    y_test = targets[test_idx]
+    le = LabelEncoder()
+    y_train_encoded = le.fit_transform(y_train)
+    y_test_encoded = le.transform(y_test)
+    scaler = StandardScaler()
+    X_train_std = scaler.fit_transform(X_train)
+    X_test_std = scaler.transform(X_test)
+    pca = PCA(n_components=128)
+    X_train_pca = pca.fit_transform(X_train_std)
+    X_test_pca = pca.transform(X_test_std)
+    clf = SVC(C=5., gamma=0.001)
+    clf.fit(X_train_pca, y_train_encoded)
+    y_predict = clf.predict(X_test_pca)
+    y_predict_encoded = le.inverse_transform(y_predict)
+    example_idx = 1892
+    example_image = load_image(metadata[test_idx][example_idx].image_path())
+    example_prediction = y_predict[example_idx] 
+    example_identity =  y_predict_encoded[example_idx] 
+    st.write(f'Identified as {example_identity}')
+    st.image(example_image)
+
+
+
 embeddings=initialization()
+train()
 #插入功能
 
 

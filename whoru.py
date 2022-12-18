@@ -110,13 +110,6 @@ def vgg_face():
 def distance(emb1, emb2):
     return np.sum(np.square(emb1 - emb2))
 
-def show_pair(idx1, idx2):
-    plt.figure(figsize=(8,3))
-    st.write(f'Distance between {idx1} & {idx2}= {distance(embeddings[idx1], embeddings[idx2]):.2f}')
-
-    st.image(load_image(metadata[idx1].image_path()))
-
-    st.image(load_image(metadata[idx2].image_path()))
 
 @st.cache
 def load_audio():
@@ -137,14 +130,12 @@ function_split=["Face recognition","Emotional recognition","Camera capture"]
 member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Guowen Wang","Junyang Huang","Kecen Yin"]
 #start
 
-@st.experimental_memo
-def initialization():
-    metadata = load_metadata(source_dir)
-    model = vgg_face()
-    model.load_weights('./vgg_face_weights.h5')
-    vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
-    embeddings = np.load('data.npy')
-    return embeddings
+
+metadata = load_metadata(source_dir)
+model = vgg_face()
+model.load_weights('./vgg_face_weights.h5')
+vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
+embeddings = np.load('data.npy')
 
 
 @st.cache
@@ -159,6 +150,7 @@ def extract_face_embeddings(img_):
     embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img_, axis=0))[0]
 
     return embedding_vector
+
 
 def train(img_path,img):
     cv2.imwrite(img_path, img)
@@ -218,10 +210,7 @@ def emotion(img):
     
     return predicted_emotion
 
-embeddings=initialization()
-model = vgg_face()
-model.load_weights("./vgg_face_weights.h5")
-vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
+
 #插入功能
 audio_bytes = load_audio()
 function_type = st.sidebar.selectbox("Function Select", function_split)

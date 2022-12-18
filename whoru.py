@@ -181,7 +181,6 @@ def train():
 
 
 embeddings=initialization()
-train()
 #插入功能
 
 

@@ -10,6 +10,12 @@ import cv2
 from tensorflow.keras.models import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import ZeroPadding2D, Convolution2D, MaxPooling2D, Dropout, Flatten, Activation
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+
+
 
 st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
 
@@ -17,6 +23,7 @@ source_dir="./105_classes_pins_dataset"
 @st.cache
 def load_image(path):
     img = cv2.imread(path, 1)
+    img = cv2.resize(img, dsize = (224,224))
     # OpenCV loads images with color channels
     # in BGR order. So we need to reverse them
     return img[...,::-1]
@@ -142,23 +149,9 @@ model = vgg_face()
 model.load_weights('./vgg_face_weights.h5')
 vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
 
-img_path = metadata[17024].image_path()
-img = load_image(img_path)
-
-# Normalising pixel values from [0-255] to [0-1]: scale RGB values to interval [0,1]
-img = (img / 255.).astype(np.float32)
-img = cv2.resize(img, dsize = (224,224))
-# Obtain embedding vector for an image
-# Get the embedding vector for the above image using vgg_face_descriptor model and print the shape 
-embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
-
-
-
-embeddings = np.zeros((metadata.shape[0], 2622))#初始化嵌入数组
-
+embeddings = np.load('data.npy')
 #插入功能
-
-
+show_pair(17023, 17024)
 
 
 

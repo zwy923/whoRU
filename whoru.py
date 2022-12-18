@@ -214,7 +214,8 @@ elif (function_type == "Emotional recognition"):
         img_array = np.array(img)
         st.success('This is a success img load', icon="✅")
         predicted_emotion=emotion(img_array)
-        st.write(f"Predicted emotion: {predicted_emotion}")
+        st.subheader(f"Predicted emotion: {predicted_emotion}")
+        st.image(img)
 else:
     file = st.file_uploader('Upload An Image')
     if(file):

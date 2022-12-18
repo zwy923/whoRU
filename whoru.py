@@ -1,4 +1,5 @@
 import h5py
+import imageio
 import streamlit as st
 import numpy as np
 from PIL import Image
@@ -145,41 +146,19 @@ def initialization():
     embeddings = np.load('data.npy')
     return embeddings
 
-@st.experimental_memo
-def train():
-    train_idx = np.arange(metadata.shape[0]) % 9 != 0     #every 9th example goes in test data and rest go in train data
-    test_idx = np.arange(metadata.shape[0]) % 9 == 0
-    # one half as train examples of 10 identities
-    X_train = embeddings[train_idx]
-    # another half as test examples of 10 identities
-    X_test = embeddings[test_idx]
-    targets = np.array([m.name for m in metadata])
-    #train labels
-    y_train = targets[train_idx]
-    #test labels
-    y_test = targets[test_idx]
-    le = LabelEncoder()
-    y_train_encoded = le.fit_transform(y_train)
-    y_test_encoded = le.transform(y_test)
-    scaler = StandardScaler()
-    X_train_std = scaler.fit_transform(X_train)
-    X_test_std = scaler.transform(X_test)
-    pca = PCA(n_components=128)
-    X_train_pca = pca.fit_transform(X_train_std)
-    X_test_pca = pca.transform(X_test_std)
-    clf = SVC(C=5., gamma=0.001)
-    clf.fit(X_train_pca, y_train_encoded)
-    y_predict = clf.predict(X_test_pca)
-    y_predict_encoded = le.inverse_transform(y_predict)
 
+@st.cache
+def extract_face_embeddings(img_):
+    # Load and preprocess the image
     
-    example_idx = 1892
-    example_image = load_image(metadata[test_idx][example_idx].image_path())
-    example_prediction = y_predict[example_idx] 
-    example_identity =  y_predict_encoded[example_idx] 
-    st.write(f'Identified as {example_identity}')
-    st.image(example_image)
+    img_ = cv2.cvtColor(img_, cv2.COLOR_BGR2RGB)
+    img_ = (img_ / 255.).astype(np.float32)
+    img_ = cv2.resize(img_, dsize=(224, 224))
 
+    # Generate the embedding vector
+    embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img_, axis=0))[0]
+
+    return embedding_vector
 
 def emotion(img):
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}   
@@ -217,7 +196,55 @@ elif (function_type == "Emotional recognition"):
         st.subheader(f"Predicted emotion: {predicted_emotion}")
         st.image(img)
 else:
+    model = vgg_face()
+    model.load_weights("./vgg_face_weights.h5")
+    vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)
         st.success('This is a success img load', icon="✅")
+        img_path ="./"+file.name
+        img = imageio.imread(file)
+        cv2.imwrite(img_path, img)
+        with open(img_path, 'rb') as f:
+            img = cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR)
+        embedding0=extract_face_embeddings(img)
+        train_idx = np.arange(metadata.shape[0]) % 9 != 0
+
+        X_train = embeddings[train_idx]
+        scaler = StandardScaler()
+        X_test = embedding0
+        X_test = X_test.reshape(1, -1)
+        targets = np.array([m.name for m in metadata])
+        
+        y_train = targets[train_idx]
+
+        y_test = targets[0]
+        y_test = np.array(y_test).reshape(-1)
+
+        le = LabelEncoder()
+        y_train_encoded = le.fit_transform(y_train)
+
+        y_test_encoded = le.transform(y_test)
+
+        scaler = StandardScaler()
+        X_train_std = scaler.fit_transform(X_train)
+        X_test_std = scaler.transform(X_test.reshape(-1,2622 ))
+
+        pca = PCA(n_components=128)
+        X_train_pca = pca.fit_transform(X_train_std)
+        X_test_pca = pca.transform(X_test_std)
+
+
+        clf = SVC(C=5., gamma=0.001)
+        clf.fit(X_train_pca, y_train_encoded)
+        y_predict = clf.predict(X_test_pca)
+
+        y_predict_encoded = le.inverse_transform(y_predict)
+
+        example_image = load_image(img_path)
+        example_prediction = y_predict[0]
+        example_identity =  y_predict_encoded[0]
+
+        st.image(img,width=300)
+        st.write(f'Identified as {example_identity}')

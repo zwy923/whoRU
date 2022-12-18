@@ -169,6 +169,8 @@ def train():
     clf.fit(X_train_pca, y_train_encoded)
     y_predict = clf.predict(X_test_pca)
     y_predict_encoded = le.inverse_transform(y_predict)
+
+    
     example_idx = 1892
     example_image = load_image(metadata[test_idx][example_idx].image_path())
     example_prediction = y_predict[example_idx] 

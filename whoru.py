@@ -151,7 +151,7 @@ vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-
 
 embeddings = np.load('data.npy')
 #插入功能
-show_pair(17023, 17025)
+show_pair(1890, 1892)
 
 
 

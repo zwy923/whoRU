@@ -219,8 +219,10 @@ def emotion(img):
     return predicted_emotion
 
 embeddings=initialization()
+model = vgg_face()
+model.load_weights("./vgg_face_weights.h5")
+vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
 #插入功能
-
 audio_bytes = load_audio()
 function_type = st.sidebar.selectbox("Function Select", function_split)
 group_member = st.sidebar.selectbox("Group member",member)
@@ -240,9 +242,6 @@ elif (function_type == "Emotional recognition"):
         st.subheader(f"Predicted emotion: {predicted_emotion}")
         st.image(img,width=300)
 else:
-    model = vgg_face()
-    model.load_weights("./vgg_face_weights.h5")
-    vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)

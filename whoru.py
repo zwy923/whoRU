@@ -160,6 +160,50 @@ def extract_face_embeddings(img_):
 
     return embedding_vector
 
+def train(img_path,img):
+    cv2.imwrite(img_path, img)
+    with open(img_path, 'rb') as f:
+        img = cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR)
+    embedding0=extract_face_embeddings(img)
+    train_idx = np.arange(metadata.shape[0]) % 9 != 0
+    X_train = embeddings[train_idx]
+    scaler = StandardScaler()
+    X_test = embedding0
+    X_test = X_test.reshape(1, -1)
+    targets = np.array([m.name for m in metadata])
+        
+    y_train = targets[train_idx]
+
+    y_test = targets[0]
+    y_test = np.array(y_test).reshape(-1)
+
+    le = LabelEncoder()
+    y_train_encoded = le.fit_transform(y_train)
+
+    y_test_encoded = le.transform(y_test)
+
+    scaler = StandardScaler()
+    X_train_std = scaler.fit_transform(X_train)
+    X_test_std = scaler.transform(X_test.reshape(-1,2622 ))
+
+    pca = PCA(n_components=128)
+    X_train_pca = pca.fit_transform(X_train_std)
+    X_test_pca = pca.transform(X_test_std)
+
+
+    clf = SVC(C=5., gamma=0.001)
+    clf.fit(X_train_pca, y_train_encoded)
+    y_predict = clf.predict(X_test_pca)
+
+    y_predict_encoded = le.inverse_transform(y_predict)
+
+    example_image = load_image(img_path)
+    example_prediction = y_predict[0]
+    example_identity =  y_predict_encoded[0]
+
+    st.subheader(f'Identified as {example_identity}')
+    st.image(img,width=300)
+
 def emotion(img):
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}   
     model = load_model('./63.h5',compile=False)
@@ -194,7 +238,7 @@ elif (function_type == "Emotional recognition"):
         st.success('This is a success img load', icon="✅")
         predicted_emotion=emotion(img_array)
         st.subheader(f"Predicted emotion: {predicted_emotion}")
-        st.image(img)
+        st.image(img,width=300)
 else:
     model = vgg_face()
     model.load_weights("./vgg_face_weights.h5")
@@ -205,46 +249,4 @@ else:
         st.success('This is a success img load', icon="✅")
         img_path ="./"+file.name
         img = imageio.imread(file)
-        cv2.imwrite(img_path, img)
-        with open(img_path, 'rb') as f:
-            img = cv2.imdecode(np.frombuffer(f.read(), np.uint8), cv2.IMREAD_COLOR)
-        embedding0=extract_face_embeddings(img)
-        train_idx = np.arange(metadata.shape[0]) % 9 != 0
-
-        X_train = embeddings[train_idx]
-        scaler = StandardScaler()
-        X_test = embedding0
-        X_test = X_test.reshape(1, -1)
-        targets = np.array([m.name for m in metadata])
-        
-        y_train = targets[train_idx]
-
-        y_test = targets[0]
-        y_test = np.array(y_test).reshape(-1)
-
-        le = LabelEncoder()
-        y_train_encoded = le.fit_transform(y_train)
-
-        y_test_encoded = le.transform(y_test)
-
-        scaler = StandardScaler()
-        X_train_std = scaler.fit_transform(X_train)
-        X_test_std = scaler.transform(X_test.reshape(-1,2622 ))
-
-        pca = PCA(n_components=128)
-        X_train_pca = pca.fit_transform(X_train_std)
-        X_test_pca = pca.transform(X_test_std)
-
-
-        clf = SVC(C=5., gamma=0.001)
-        clf.fit(X_train_pca, y_train_encoded)
-        y_predict = clf.predict(X_test_pca)
-
-        y_predict_encoded = le.inverse_transform(y_predict)
-
-        example_image = load_image(img_path)
-        example_prediction = y_predict[0]
-        example_identity =  y_predict_encoded[0]
-
-        st.image(img,width=300)
-        st.write(f'Identified as {example_identity}')
+        train(img_path,img)

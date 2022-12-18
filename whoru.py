@@ -121,17 +121,6 @@ def load_audio():
     audio_bytes = audio_file.read()
     return audio_bytes
 
-@st.experimental_memo
-def creat_embedding(embeddings):
-    for i, m in enumerate(metadata):
-        img_path = metadata[i].image_path()
-        img = load_image(img_path)
-        img = (img / 255.).astype(np.float32)
-        img = cv2.resize(img, dsize = (224,224))
-        embedding_vector = vgg_face_descriptor.predict(np.expand_dims(img, axis=0))[0]
-        embeddings[i]=embedding_vector
-
-
 st.title('Welcome To Smart System Project WhoRU!')
 instructions = """
         Either upload your own image or select from
@@ -144,14 +133,18 @@ st.write(instructions)
 function_split=["Face recognition","Emotional recognition","Camera capture"]
 member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Guowen Wang","Junyang Huang","Kecen Yin"]
 #start
-metadata = load_metadata(source_dir)
-model = vgg_face()
-model.load_weights('./vgg_face_weights.h5')
-vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
 
-embeddings = np.load('data.npy')
+@st.experimental_memo
+def initialization():
+    metadata = load_metadata(source_dir)
+    model = vgg_face()
+    model.load_weights('./vgg_face_weights.h5')
+    vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
+    embeddings = np.load('data.npy')
+    return embeddings
+
+embeddings=initialization()
 #插入功能
-show_pair(1890, 1892)
 
 
 

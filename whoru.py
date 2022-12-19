@@ -269,6 +269,7 @@ elif (function_type == "Emotional recognition"):
         st.subheader(f"Predicted emotion: {predicted_emotion}")
         st.image(img,width=300)
 else:
+    st.snow()
     st.image("./assets/img/output1.png")
     st.write("\nIdentify any celebrity with just a photo - our AI-powered celebrity recognition app does the work for you!\n")
     file = st.file_uploader('Upload An Image')

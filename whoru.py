@@ -17,7 +17,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 import tensorflow as tf
-
+import requests
+from bs4 import BeautifulSoup
+from lxml import html
 
 
 st.set_page_config(page_title="WhoRU", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
@@ -151,6 +153,34 @@ def extract_face_embeddings(img_):
 
     return embedding_vector
 
+def get_wikipedia_data(name):
+  # 将名字转化为维基百科可识别的格式，例如将空格替换为'_'
+  name = name.replace(' ', '_')
+  
+  # 构造维基百科的URL
+  url = f'https://en.wikipedia.org/wiki/{name}'
+  
+  # 使用requests库的get函数发送HTTP GET请求
+  response = requests.get(url)
+  
+  # 如果返回的状态码不是200，则请求失败
+  if response.status_code != 200:
+    return None
+  
+  # 返回响应内容
+  return response.text
+
+
+def parse_wikipedia_data(text):
+  # 使用lxml的html模块解析HTML
+  tree = html.fromstring(text)
+  
+  # 使用XPath表达式查找元素
+  element = tree.xpath('//*[@id="mw-content-text"]/div[1]/p[2]')
+  print(html.tostring(element[0], method='text', encoding='unicode'))
+  # 返回元素的文本内容
+  return html.tostring(element[0], method='text', encoding='unicode')
+  
 
 def train(img_path,img):
     cv2.imwrite(img_path, img)
@@ -193,9 +223,17 @@ def train(img_path,img):
     example_prediction = y_predict[0]
     example_identity =  y_predict_encoded[0]
 
-    st.subheader(f'Identified as {example_identity}')
+    name=example_identity[5:]
+    
+    st.subheader(f'Identified as {name}')
     st.image(img,width=300)
 
+    html = get_wikipedia_data(name)
+    if html:
+        data = parse_wikipedia_data(html)
+        st.write(data)  
+    else:
+        print('Request failed')
 def emotion(img):
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}   
     model = load_model('./63.h5',compile=False)

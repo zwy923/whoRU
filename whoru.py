@@ -227,13 +227,15 @@ def train(img_path,img):
     
     st.subheader(f'Identified as {name}')
     st.image(img,width=300)
-
-    html = get_wikipedia_data(name)
-    if html:
-        data = parse_wikipedia_data(html)
-        st.write(data)  
+    if (name=="Wenyue Zhang"):
+        st.write("Meet Wenyue, a 21-year-old computer science major hailing from China who speaks English fluently. Zhang Wenyue is also a fun-loving individual with a great sense of humor. In his free time, he enjoys coding up a storm and playing video games with his friends. He's also an avid fan of science fiction and loves to immerse himself in futuristic worlds through books, movies. But above all, Wenyue is a kind and compassionate person who is always willing to lend a helping hand to those in need. So next time you see him around campus, be sure to say hi and get to know this unique and talented individual.")
     else:
-        print('Request failed')
+        html = get_wikipedia_data(name)
+        if html:
+            data = parse_wikipedia_data(html)
+            st.write(data)  
+        else:
+            print('Request failed')
 def emotion(img):
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}   
     model = load_model('./63.h5',compile=False)

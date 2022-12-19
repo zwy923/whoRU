@@ -7,3 +7,5 @@ opencv_contrib_python
 opencv-python-headless
 tensorflow-cpu==2.7.0
 imageio
+beautifulsoup4
+lxml

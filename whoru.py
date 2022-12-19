@@ -121,11 +121,7 @@ def load_audio():
 
 st.title('Welcome To Smart System Project WhoRU!')
 instructions = """
-        Either upload your own image or select from
-        the sidebar to get a preconfigured image.
-        The image you select or upload will be fed
-        through the Deep Neural Network in real-time
-        and the output will be displayed to the screen.
+        Select a function from the sidebar to upload your own image. The image you select or upload will be input into the depth neural network in real time, and the output will be displayed on the screen.
         """
 st.write(instructions)
 function_split=["Face recognition","Emotional recognition","Camera capture"]
@@ -262,6 +258,8 @@ if (function_type == "Camera capture"):
     picture = st.camera_input("Take a picture")
 
 elif (function_type == "Emotional recognition"):
+    st.image("./assets/img/output2.png")
+    st.write("Experience the power of AI-powered emotion recognition - never second-guess how someone is feeling again!")
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)
@@ -271,6 +269,8 @@ elif (function_type == "Emotional recognition"):
         st.subheader(f"Predicted emotion: {predicted_emotion}")
         st.image(img,width=300)
 else:
+    st.image("./assets/img/output1.png")
+    st.write("\nIdentify any celebrity with just a photo - our AI-powered celebrity recognition app does the work for you!\n")
     file = st.file_uploader('Upload An Image')
     if(file):
         img = Image.open(file)

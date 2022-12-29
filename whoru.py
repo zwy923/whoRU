@@ -260,6 +260,9 @@ if (function_type == "Camera capture"):
     if(picture):
         image = Image.open(picture)
         img_array = np.array(image)
+        img_path ="./"+picture.name
+        img = imageio.imread(picture)
+        train(img_path,img)
         predicted_emotion=emotion(img_array)
         st.subheader(f"Predicted emotion: {predicted_emotion}")
 

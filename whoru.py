@@ -2,6 +2,7 @@ import h5py
 import imageio
 import streamlit as st
 import numpy as np
+from io import BytesIO
 from PIL import Image
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve,accuracy_score,f1_score,precision_score,recall_score
@@ -256,6 +257,11 @@ with st.sidebar:
     st.write("The Who - Who Are You")
 if (function_type == "Camera capture"):
     picture = st.camera_input("Take a picture")
+    if(picture):
+        image = Image.open(picture)
+        img_array = np.array(image)
+        predicted_emotion=emotion(img_array)
+        st.subheader(f"Predicted emotion: {predicted_emotion}")
 
 elif (function_type == "Emotional recognition"):
     st.image("./assets/img/output2.png")

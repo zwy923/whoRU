@@ -125,7 +125,7 @@ instructions = """
         Select a function from the sidebar to upload your own image. The image you select or upload will be input into the depth neural network in real time, and the output will be displayed on the screen.
         """
 st.write(instructions)
-function_split=["Face recognition","Emotional recognition","Camera capture"]
+function_split=["Face recognition","Emotion recognition","Camera capture"]
 member=["Wenyue Zhang","Yufeng Pan","Jiaxuan Qi","Guowen Wang","Junyang Huang","Kecen Yin"]
 #start
 
@@ -256,17 +256,17 @@ with st.sidebar:
     st.audio(audio_bytes, format='audio/ogg')
     st.write("The Who - Who Are You")
 if (function_type == "Camera capture"):
-    picture = st.camera_input("Take a picture")
-    if(picture):
-        image = Image.open(picture)
-        img_array = np.array(image)
-        img_path ="./"+picture.name
-        img = imageio.imread(picture)
-        train(img_path,img)
+    file = st.camera_input("Take a picture")
+    if(file):
+        img = Image.open(file)
+        img_array = np.array(img)
         predicted_emotion=emotion(img_array)
         st.subheader(f"Predicted emotion: {predicted_emotion}")
+        img_path ="./"+file.name
+        img = imageio.imread(file)
+        train(img_path,img)
 
-elif (function_type == "Emotional recognition"):
+elif (function_type == "Emotion recognition"):
     st.image("./assets/img/output2.png")
     st.write("Experience the power of AI-powered emotion recognition - never second-guess how someone is feeling again!")
     file = st.file_uploader('Upload An Image')

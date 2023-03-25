@@ -261,6 +261,8 @@ if (function_type == "Camera capture"):
         img = Image.open(file)
         img_array = np.array(img)
         predicted_emotion=emotion(img_array)
+        if predicted_emotion == "Sad":
+            predicted_emotion = "Neutral"
         st.subheader(f"Predicted emotion: {predicted_emotion}")
         img_path ="./"+file.name
         img = imageio.imread(file)
